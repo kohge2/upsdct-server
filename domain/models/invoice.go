@@ -10,9 +10,11 @@ type Invoice struct {
 	ID               string
 	CompanyID        string
 	PartnerCompanyID string
-	PublishDate      time.Time // 発行日
+	PublishedDate    time.Time // 発行日
 	Commission       *int      // 手数料
 	CommissionRate   *float64  // 手数料率
+	TaxRate          *float64  // 消費税率
+	Tax              *int      // 消費税
 	PaidAmount       int       // 支払金額
 	BilledAmount     *int      // 請求金額(支払金額 に手数料4%を加えたものに更に手数料の消費税を加えたもの)
 	PaidDueDate      time.Time // 支払期限
@@ -31,11 +33,14 @@ func (m Invoice) CalcCommission() (int, error) {
 	return int(float64(m.PaidAmount) * *m.CommissionRate), nil
 }
 
-func (m Invoice) CalcBilledAmount(taxRate float64) (int, error) {
+func (m Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
 	if m.Commission == nil {
-		return 0, fmt.Errorf("commission is not set")
+		return 0, 0, fmt.Errorf("commission is not set")
 	}
-	return m.PaidAmount + int(float64(*m.Commission)*(1+taxRate)), nil
+
+	tax := int(float64(*m.Commission) * (taxRate))
+
+	return m.PaidAmount + *m.Commission + tax, tax, nil
 }
 
 func (m *Invoice) SetCommission(commission int) {
@@ -44,4 +49,8 @@ func (m *Invoice) SetCommission(commission int) {
 
 func (m *Invoice) SetBilledAmount(billedAmount int) {
 	m.BilledAmount = &billedAmount
+}
+
+func (m *Invoice) SetTax(tax int) {
+	m.Tax = &tax
 }

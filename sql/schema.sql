@@ -57,16 +57,18 @@ CREATE TABLE invoices (
     company_id VARCHAR(26) NOT NULL,
     partner_company_id VARCHAR(26) NOT NULL,
     published_date DATE NOT NULL,
-    payment_due_date DATETIME NOT NULL,
+    paid_due_date DATETIME NOT NULL,
     commission INT unsigned NOT NULL,
     commission_rate DECIMAL(6, 5) NOT NULL,
-    paid_ammount INT unsigned NOT NULL,
-    billed_ammount INT unsigned NOT NULL,
+    tax INT unsigned NOT NULL,
+    tax_rate DECIMAL(3, 2) NOT NULL,
+    paid_amount INT unsigned NOT NULL,
+    billed_amount INT unsigned NOT NULL,
     invoice_status VARCHAR(255) NOT NULL,
     created_by VARCHAR(26) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at DATETIME DEFAULT NULL,
-    INDEX i1 (company_id, payment_due_date),
-    INDEX i2 (partner_company_id, payment_due_date)
+    INDEX i1 (company_id, paid_due_date),
+    INDEX i2 (partner_company_id, paid_due_date)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
