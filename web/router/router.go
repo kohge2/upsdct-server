@@ -27,7 +27,7 @@ func NewRouter(db *database.DB, txn *database.Transaction) *gin.Engine {
 	authorized.Use(middleware.Auth())
 	authorized.Use(middleware.ErrorMiddleware())
 	{
-		authorized.GET("/invoices", nil)
+		authorized.GET("/invoices", invoiceHandler.GetInvoices)
 		authorized.POST("/invoices", invoiceHandler.CreateInvoice)
 	}
 

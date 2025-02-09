@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kohge2/upsdct-server/utils"
 )
 
 type CreateInvoiceRequest struct {
@@ -23,7 +24,38 @@ func (r *CreateInvoiceRequest) Bind(c *gin.Context) error {
 func (r *CreateInvoiceRequest) GetPaidDueDate() (*time.Time, error) {
 	paidDueDate, err := time.Parse(time.RFC3339, r.PaidDueDate)
 	if err != nil {
-		return nil, err
+		return nil, utils.NewAppValidateByErr("paidDueDate")
 	}
 	return &paidDueDate, nil
+}
+
+type GetInvoicesRequest struct {
+	StartDate string `query:"startDate"`
+	EndDate   string `query:"endDate"`
+}
+
+func (r *GetInvoicesRequest) Bind(c *gin.Context) error {
+	r.StartDate = c.Query("startDate")
+	r.EndDate = c.Query("endDate")
+	return nil
+}
+
+func (r *GetInvoicesRequest) GetStartDateAndEndDate() (*time.Time, *time.Time, error) {
+	var startDate, endDate *time.Time
+	if r.StartDate != "" {
+		date, err := time.Parse(time.RFC3339, r.StartDate)
+		if err != nil {
+			return nil, nil, utils.NewAppValidateByErr("startDate")
+		}
+		startDate = &date
+	}
+
+	if r.EndDate != "" {
+		date, err := time.Parse(time.RFC3339, r.EndDate)
+		if err != nil {
+			return nil, nil, utils.NewAppValidateByErr("endDate")
+		}
+		endDate = &date
+	}
+	return startDate, endDate, nil
 }

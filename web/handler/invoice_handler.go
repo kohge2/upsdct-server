@@ -50,5 +50,39 @@ func (h *InvoiceHandler) CreateInvoice(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response.NewPostResponse())
+}
 
+// GetInvoices upsdct-server godoc
+//
+// @Summary 請求書 取得
+// @Description
+// @Description ⚫︎パラメータについて: <br> 「startDate」支払い期日で絞り込む時の開始日時 フォーマットはRFC3339の文字列(例:日本時間22時の場合 "2025-05-31T22:00:00+09:00") <br> 「endDate」支払い期日で絞り込む時の終了日時 フォーマットはRFC3339の文字列(例:日本時間22時の場合 "2025-05-31T22:00:00+09:00")
+// @Description ⚫︎説明: <br> ログイン中のユーザー情報を取得し、そのユーザーが所属する企業が登録した請求書一覧を取得するAPI
+// @Produce json
+// @Security Token || DebugUser
+// @Param       request query request.GetInvoicesRequest true " "
+// @Tags invoice
+// @Success     200  {object} response.GetInvoicesResponse ""
+// @Router      /api/invoices [get]
+func (h *InvoiceHandler) GetInvoices(c *gin.Context) {
+	req := new(request.GetInvoicesRequest)
+	if err := req.Bind(c); err != nil {
+		c.Error(err)
+		return
+	}
+	startDate, endDate, err := req.GetStartDateAndEndDate()
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	// ログイン中のユーザー情報取得
+	userID := c.GetString("userID")
+
+	invoices, parnterCompanies, err := h.invoiceUseCase.GetInvoices(userID, startDate, endDate)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, response.NewGetInvoicesResponse(invoices, parnterCompanies))
 }
