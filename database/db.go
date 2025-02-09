@@ -34,3 +34,7 @@ func (db DB) GetNewTxnOrContext(ctx context.Context) *gorm.DB {
 	}
 	return db.conn
 }
+
+func NewDB(gormDB *gorm.DB) *DB {
+	return &DB{conn: gormDB}
+}
