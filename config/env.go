@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -15,6 +16,10 @@ type EnvConfig struct {
 var Env *EnvConfig
 
 func InitEnvConfig() (*EnvConfig, error) {
+	if os.Getenv("ENV") == "test" {
+		Env = &EnvConfig{}
+		return Env, nil
+	}
 	viper.AddConfigPath(".")
 	viper.SetConfigName("local")
 	viper.SetConfigType("env")

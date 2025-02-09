@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/kohge2/upsdct-server/config"
-	"github.com/kohge2/upsdct-server/database"
 	"github.com/kohge2/upsdct-server/domain/models"
 	"github.com/kohge2/upsdct-server/domain/repository"
 	"github.com/kohge2/upsdct-server/utils"
@@ -21,10 +20,10 @@ type invoiceUseCase struct {
 	userRepository           repository.UserRepository
 	companyRepository        repository.CompanyRepository
 	partnerCompanyRepository repository.PartnerCompanyRepository
-	transaction              database.Transaction
+	transaction              Transaction
 }
 
-func NewInvoiceUseCase(invoiceRepositry repository.InvoiceRepository, userRepository repository.UserRepository, companyRepository repository.CompanyRepository, partnerCompanyRepository repository.PartnerCompanyRepository, transaction database.Transaction) InvoiceUseCase {
+func NewInvoiceUseCase(invoiceRepositry repository.InvoiceRepository, userRepository repository.UserRepository, companyRepository repository.CompanyRepository, partnerCompanyRepository repository.PartnerCompanyRepository, transaction Transaction) InvoiceUseCase {
 	return &invoiceUseCase{
 		invoiceRepository:        invoiceRepositry,
 		userRepository:           userRepository,

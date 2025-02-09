@@ -19,7 +19,7 @@ func NewRouter(db *database.DB, txn *database.Transaction) *gin.Engine {
 	invoiceUseCase := usecase.NewInvoiceUseCase(
 		adapter.NewInvoiceRepository(db), adapter.NewUserRepository(db),
 		adapter.NewCompanyRepository(db), adapter.NewPartnerCompanyRepository(db),
-		*txn,
+		txn,
 	)
 	invoiceHandler := handler.NewInvoiceHandler(invoiceUseCase)
 
