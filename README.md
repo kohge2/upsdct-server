@@ -24,15 +24,16 @@ make test
 
 ## 実施メモ
 数日に分けて少しずつ進めて合計約2時間
-- feat: 共通で使用する処理(utils,config(環境変数),エラー周りなど) https://github.com/kohge2/upsdct-server/pull/1
-- feat: モデルとDDL https://github.com/kohge2/upsdct-server/pull/2
+- 共通で使用する処理(utils,config(環境変数),エラー周りなど) https://github.com/kohge2/upsdct-server/pull/1
+- モデル、テーブル定義など https://github.com/kohge2/upsdct-server/pull/2
 
 まとめて時間とって約3時間
-- feat: 請求書登録API と swagger関連の設定 と domainのテスト https://github.com/kohge2/upsdct-server/pull/3
-- feat: 請求書取得API  https://github.com/kohge2/upsdct-server/pull/4
+- 請求書登録API と swagger関連の設定 と domainのテスト https://github.com/kohge2/upsdct-server/pull/3
+- 請求書取得API  https://github.com/kohge2/upsdct-server/pull/4
 
 調べながら約2時間
-- adapter,usecaseのテスト、その他修正
+- adapter,usecaseのテスト、その他修正 https://github.com/kohge2/upsdct-server/pull/6
 
-追加対応したい
-- TODO 環境構築をDockerでできるように
+TODO 追加対応したい
+- 環境構築をDockerでできるように、初期データのセットアップ
+- テスト増やす
