@@ -54,3 +54,17 @@ func (m *Invoice) SetBilledAmount(billedAmount int) {
 func (m *Invoice) SetTax(tax int) {
 	m.Tax = &tax
 }
+
+type InvoiceList []*Invoice
+
+func (l InvoiceList) UniquePartnerCompanyIDs() []string {
+	uniquePartnerCompanyIDs := make([]string, 0, len(l))
+	uniquePartnerCompanyIDsMap := make(map[string]struct{}, len(l))
+	for _, invoice := range l {
+		if _, ok := uniquePartnerCompanyIDsMap[invoice.PartnerCompanyID]; !ok {
+			uniquePartnerCompanyIDs = append(uniquePartnerCompanyIDs, invoice.PartnerCompanyID)
+			uniquePartnerCompanyIDsMap[invoice.PartnerCompanyID] = struct{}{}
+		}
+	}
+	return uniquePartnerCompanyIDs
+}

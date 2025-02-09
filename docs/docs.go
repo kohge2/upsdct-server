@@ -16,6 +16,42 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/api/invoices": {
+            "get": {
+                "security": [
+                    {
+                        "DebugUser": [],
+                        "Token": []
+                    }
+                ],
+                "description": "⚫︎パラメータについて: \u003cbr\u003e 「startDate」支払い期日で絞り込む時の開始日時 フォーマットはRFC3339の文字列(例:日本時間22時の場合 \"2025-05-31T22:00:00+09:00\") \u003cbr\u003e 「endDate」支払い期日で絞り込む時の終了日時 フォーマットはRFC3339の文字列(例:日本時間22時の場合 \"2025-05-31T22:00:00+09:00\")\n⚫︎説明: \u003cbr\u003e ログイン中のユーザー情報を取得し、そのユーザーが所属する企業が登録した請求書一覧を取得するAPI",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "invoice"
+                ],
+                "summary": "請求書 取得",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "endDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "startDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetInvoicesResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -73,11 +109,80 @@ const docTemplate = `{
                 }
             }
         },
+        "response.GetInvoicesResponse": {
+            "type": "object",
+            "properties": {
+                "invoices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.getInvoiceResponseItem"
+                    }
+                }
+            }
+        },
         "response.PostResponse": {
             "type": "object",
             "properties": {
                 "ok": {
                     "type": "integer"
+                }
+            }
+        },
+        "response.getInvoiceResponseItem": {
+            "type": "object",
+            "properties": {
+                "billedAmount": {
+                    "type": "integer"
+                },
+                "commission": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "invoiceStatus": {
+                    "type": "string"
+                },
+                "paidAmount": {
+                    "type": "integer"
+                },
+                "paidDueDate": {
+                    "type": "string"
+                },
+                "partnerCompanyBankAccount": {
+                    "$ref": "#/definitions/response.partnerCompanyBankAccountResponse"
+                },
+                "partnerCompanyID": {
+                    "type": "string"
+                },
+                "partnerCompanyName": {
+                    "type": "string"
+                },
+                "publishedDate": {
+                    "type": "string"
+                },
+                "tax": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.partnerCompanyBankAccountResponse": {
+            "type": "object",
+            "properties": {
+                "accountHolderName": {
+                    "type": "string"
+                },
+                "accountNumber": {
+                    "type": "string"
+                },
+                "accountType": {
+                    "type": "string"
+                },
+                "bankName": {
+                    "type": "string"
+                },
+                "branchName": {
+                    "type": "string"
                 }
             }
         }

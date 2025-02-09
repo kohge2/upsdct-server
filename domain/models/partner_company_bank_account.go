@@ -1,7 +1,10 @@
 package models
 
+import "github.com/kohge2/upsdct-server/utils"
+
 type PartnerCompanyBankAccount struct {
 	SoftModel
+	ID                string
 	PartnerCompanyID  string
 	BankName          string
 	BranchName        string
@@ -33,4 +36,42 @@ func (t AccountType) Label() string {
 		return "普通預金"
 	}
 	return ""
+}
+
+func (m *PartnerCompanyBankAccount) SetDecryptedAccountNumber(key string) (string, error) {
+	accountNumber, err := utils.Decrypt(m.AccountNumber, key)
+	if err != nil {
+		return "", err
+	}
+
+	m.AccountNumber = accountNumber
+	return accountNumber, nil
+}
+
+func (m *PartnerCompanyBankAccount) EncryptedAccountNumber(key string) error {
+	encrypted, err := utils.Encrypt(m.AccountNumber, key)
+	if err != nil {
+		return err
+	}
+	m.AccountNumber = encrypted
+	return nil
+}
+
+func (m *PartnerCompanyBankAccount) SetDecryptedAccountHolderName(key string) (string, error) {
+	name, err := utils.Decrypt(m.AccountHolderName, key)
+	if err != nil {
+		return "", err
+	}
+
+	m.AccountHolderName = name
+	return name, nil
+}
+
+func (m *PartnerCompanyBankAccount) EncryptedAccountHolderName(key string) error {
+	encrypted, err := utils.Encrypt(m.AccountHolderName, key)
+	if err != nil {
+		return err
+	}
+	m.AccountHolderName = encrypted
+	return nil
 }

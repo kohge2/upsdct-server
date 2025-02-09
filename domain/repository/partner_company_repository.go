@@ -8,4 +8,5 @@ import (
 
 type PartnerCompanyRepository interface {
 	FindByPartnerCompanyID(ctx context.Context, partnerCompanyID string) (*models.PartnerCompany, error)
+	FindPartnerCompanyEmbedListByPartnerCompanyIDs(ctx context.Context, partnerCompanyIDs []string) (models.PartnerCompanyEmbedList, error)
 }

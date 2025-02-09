@@ -38,7 +38,7 @@ CREATE TABLE partner_companies (
     UNIQUE KEY u1 (name)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-CREATE TABLE partner_company_bank_account (
+CREATE TABLE partner_company_bank_accounts (
     id VARCHAR(26) PRIMARY KEY,
     partner_company_id VARCHAR(26) NOT NULL,
     bank_name VARCHAR(255) NOT NULL,
@@ -70,5 +70,5 @@ CREATE TABLE invoices (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at DATETIME DEFAULT NULL,
     INDEX i1 (company_id, paid_due_date),
-    INDEX i2 (partner_company_id, paid_due_date)
+    INDEX i2 (paid_due_date)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

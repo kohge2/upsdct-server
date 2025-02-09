@@ -31,3 +31,23 @@ func (a *PartnerCompanyRepository) FindByPartnerCompanyID(ctx context.Context, p
 	}
 	return partnerCompany, nil
 }
+
+func (a *PartnerCompanyRepository) FindPartnerCompanyEmbedListByPartnerCompanyIDs(ctx context.Context, partnerCompanyIDs []string) (models.PartnerCompanyEmbedList, error) {
+	partnerCompanies := []*models.PartnerCompanyEmbed{}
+	tx := a.db.GetNewTxnOrContext(ctx)
+	if err := tx.
+		Where("id IN (?)", partnerCompanyIDs).
+		Preload("PartnerCompanyBankAccount").
+		Find(&partnerCompanies).Error; err != nil {
+		return nil, err
+	}
+	return partnerCompanies, nil
+}
+
+func (a *PartnerCompanyRepository) CreatePartnerCompany(ctx context.Context, partnerCompany *models.PartnerCompany) error {
+	return a.db.GetNewTxnOrContext(ctx).Create(partnerCompany).Error
+}
+
+func (a *PartnerCompanyRepository) CreatePartnerCompanyBankAccount(ctx context.Context, partnerCompanyBankAccount *models.PartnerCompanyBankAccount) error {
+	return a.db.GetNewTxnOrContext(ctx).Create(partnerCompanyBankAccount).Error
+}
