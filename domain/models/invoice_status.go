@@ -3,7 +3,7 @@ package models
 type InvoiceStatus string
 
 const (
-	InvoiceStatusDraft      InvoiceStatus = "draft"
+	InvoiceStatusOpen       InvoiceStatus = "open"
 	InvoiceStatusProcessing InvoiceStatus = "processing"
 	InvoiceStatusPaid       InvoiceStatus = "paid"
 	InvoiceStatusError      InvoiceStatus = "error"
@@ -15,7 +15,7 @@ func (s InvoiceStatus) String() string {
 
 func (s InvoiceStatus) IsValid() bool {
 	switch s {
-	case InvoiceStatusDraft, InvoiceStatusProcessing, InvoiceStatusPaid, InvoiceStatusError:
+	case InvoiceStatusOpen, InvoiceStatusProcessing, InvoiceStatusPaid, InvoiceStatusError:
 		return true
 	}
 	return false
@@ -23,7 +23,7 @@ func (s InvoiceStatus) IsValid() bool {
 
 func (s InvoiceStatus) Label() string {
 	switch s {
-	case InvoiceStatusDraft:
+	case InvoiceStatusOpen:
 		return "未処理"
 	case InvoiceStatusProcessing:
 		return "処理中"

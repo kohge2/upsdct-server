@@ -43,9 +43,10 @@ func TestCalcBilledAmount(t *testing.T) {
 			Commission: &commision,
 		}
 
-		billedAmount, err := invoice.CalcBilledAmount(taxRate)
+		billedAmount, tax, err := invoice.CalcBilledAmount(taxRate)
 
 		assert.Equal(t, 10440, billedAmount)
+		assert.Equal(t, 40, tax)
 		assert.NoError(t, err)
 	})
 
@@ -57,9 +58,10 @@ func TestCalcBilledAmount(t *testing.T) {
 			Commission: &commision,
 		}
 
-		billedAmount, err := invoice.CalcBilledAmount(taxRate)
+		billedAmount, tax, err := invoice.CalcBilledAmount(taxRate)
 
 		assert.Equal(t, 1045, billedAmount)
+		assert.Equal(t, 4, tax)
 		assert.NoError(t, err)
 	})
 
@@ -67,7 +69,7 @@ func TestCalcBilledAmount(t *testing.T) {
 		invoice := Invoice{
 			PaidAmount: 1000,
 		}
-		_, err := invoice.CalcBilledAmount(0.08)
+		_, _, err := invoice.CalcBilledAmount(0.08)
 		assert.Error(t, err)
 	})
 }
