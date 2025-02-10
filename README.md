@@ -18,6 +18,28 @@ go run main.go
 make test
 ```
 
+## ディレクトリの説明
+```
+.
+├── adapter # データアクセス層。domain/repositoryの実装。データの取得や永続化に関する処理
+├── config # 環境変数や定数の管理など、プロジェクト全体の設定を管理する。
+├── database # データベース関連の処理
+├── docs # swagger用のファイル。https://github.com/swaggo/swag を使用し、`swag init` コマンドでAPIドキュメントを自動生成。
+├── domain 
+|    ├── models　# エンティティ、データベースモデル
+|    └── repository　# データの永続化に関するインタフェース。adapterと対応
+├── sql # テーブル定義用のSQL
+├── testmock # テスト用のmock
+├── scripts # 手元で実行したスクリプトを保管している
+├── usecases # ビジネスロジック層。handlerから呼び出されてdomainを操作するためのロジックを提供。
+├── utils # プロジェクト全体で再利用可能な日付処理や暗号化などのユーティリティ関数を提供。
+└── web # プレゼンテーション層。HTTPインターフェイスを提供する処理。
+    ├── handler　# リクエストを受け取り、適切なusecaseを呼び出してレスポンスを返す。
+    ├── middleware　# 認証やエラーハンドリングなどのmiddlewareを管理する。
+    ├── request　# リクエストのデータ構造。
+    └── response　# レスポンスのデータ構造。
+```
+
 ## 補足
 - ログインユーザーのID: どちらもログイン前提のAPIだが、ログイン機能がないので、userIDはtest1として処理している。contextにuserIDをsetしている。
   (参考: https://github.com/kohge2/upsdct-server/blob/main/web/middleware/auth.go )
