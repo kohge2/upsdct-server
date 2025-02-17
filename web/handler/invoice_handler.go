@@ -79,11 +79,11 @@ func (h *InvoiceHandler) GetInvoices(c *gin.Context) {
 	// ログイン中のユーザー情報取得
 	userID := c.GetString("userID")
 
-	invoices, parnterCompanies, err := h.invoiceUseCase.GetInvoices(userID, startDate, endDate)
+	invoices, err := h.invoiceUseCase.GetInvoices(userID, startDate, endDate)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.NewGetInvoicesResponse(invoices, parnterCompanies))
+	c.JSON(http.StatusOK, response.NewGetInvoicesResponse(invoices))
 }

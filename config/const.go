@@ -1,6 +1,4 @@
 package config
 
-const (
-	DefaultTaxRate        = 0.1
-	DefaultCommissionRate = 0.04
-)
+var DefaultTaxRate float64 = 0.1
+var DefaultCommissionRate float64 = 0.04

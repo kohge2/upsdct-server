@@ -38,6 +38,7 @@ func (t AccountType) Label() string {
 	return ""
 }
 
+// 基本的にSetter,Getterを定義しない方針だが、暗号化する値に対しては定義残しておく
 func (m *PartnerCompanyBankAccount) SetDecryptedAccountNumber(key string) (string, error) {
 	accountNumber, err := utils.Decrypt(m.AccountNumber, key)
 	if err != nil {

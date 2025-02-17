@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 	"time"
+
+	"github.com/kohge2/upsdct-server/utils"
 )
 
 type Invoice struct {
@@ -26,33 +28,21 @@ func (m Invoice) TableName() string {
 	return "invoices"
 }
 
-func (m Invoice) CalcCommission() (int, error) {
+func (m *Invoice) CalcCommission() (int, error) {
 	if m.CommissionRate == nil {
 		return 0, fmt.Errorf("commission rate is not set")
 	}
-	return int(float64(m.PaidAmount) * *m.CommissionRate), nil
+	return utils.MultiplyIntByDecimal(m.PaidAmount, *m.CommissionRate), nil
 }
 
-func (m Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
+func (m *Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
 	if m.Commission == nil {
 		return 0, 0, fmt.Errorf("commission is not set")
 	}
 
-	tax := int(float64(*m.Commission) * (taxRate))
+	tax := utils.MultiplyIntByDecimal(*m.Commission, taxRate)
 
 	return m.PaidAmount + *m.Commission + tax, tax, nil
-}
-
-func (m *Invoice) SetCommission(commission int) {
-	m.Commission = &commission
-}
-
-func (m *Invoice) SetBilledAmount(billedAmount int) {
-	m.BilledAmount = &billedAmount
-}
-
-func (m *Invoice) SetTax(tax int) {
-	m.Tax = &tax
 }
 
 type InvoiceList []*Invoice
@@ -67,4 +57,27 @@ func (l InvoiceList) UniquePartnerCompanyIDs() []string {
 		}
 	}
 	return uniquePartnerCompanyIDs
+}
+
+type InvoiceEmbed struct {
+	Invoice
+	PartnerCompany *PartnerCompanyEmbed
+}
+
+type InvoiceEmbedList []*InvoiceEmbed
+
+func NewInvoiceEmbedList(invoices InvoiceList, partnerCompanies PartnerCompanyEmbedList) InvoiceEmbedList {
+	partnerCompanyMap := make(map[string]*PartnerCompanyEmbed, len(partnerCompanies))
+	for _, partnerCompany := range partnerCompanies {
+		partnerCompanyMap[partnerCompany.ID] = partnerCompany
+	}
+
+	embedList := make(InvoiceEmbedList, 0, len(invoices))
+	for _, invoice := range invoices {
+		embedList = append(embedList, &InvoiceEmbed{
+			Invoice:        *invoice,
+			PartnerCompany: partnerCompanyMap[invoice.PartnerCompanyID],
+		})
+	}
+	return embedList
 }
