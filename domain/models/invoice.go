@@ -68,3 +68,26 @@ func (l InvoiceList) UniquePartnerCompanyIDs() []string {
 	}
 	return uniquePartnerCompanyIDs
 }
+
+type InvoiceEmbed struct {
+	Invoice
+	PartnerCompany *PartnerCompanyEmbed
+}
+
+type InvoiceEmbedList []*InvoiceEmbed
+
+func NewInvoiceEmbedList(invoices InvoiceList, partnerCompanies PartnerCompanyEmbedList) InvoiceEmbedList {
+	partnerCompanyMap := make(map[string]*PartnerCompanyEmbed, len(partnerCompanies))
+	for _, partnerCompany := range partnerCompanies {
+		partnerCompanyMap[partnerCompany.ID] = partnerCompany
+	}
+
+	embedList := make(InvoiceEmbedList, 0, len(invoices))
+	for _, invoice := range invoices {
+		embedList = append(embedList, &InvoiceEmbed{
+			Invoice:        *invoice,
+			PartnerCompany: partnerCompanyMap[invoice.PartnerCompanyID],
+		})
+	}
+	return embedList
+}

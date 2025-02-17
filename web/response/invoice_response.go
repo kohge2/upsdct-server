@@ -33,16 +33,11 @@ type partnerCompanyBankAccountResponse struct {
 	AccountHolderName string `json:"accountHolderName"`
 }
 
-func NewGetInvoicesResponse(invoices models.InvoiceList, partnerCompanies models.PartnerCompanyEmbedList) GetInvoicesResponse {
+func NewGetInvoicesResponse(invoices models.InvoiceEmbedList) GetInvoicesResponse {
 	invoiceResponseItems := make([]getInvoiceResponseItem, 0, len(invoices))
 
-	partnerCompaniesMap := make(map[string]models.PartnerCompanyEmbed)
-	for _, partnerCompany := range partnerCompanies {
-		partnerCompaniesMap[partnerCompany.ID] = *partnerCompany
-	}
-
 	for _, invoice := range invoices {
-		partnerCompany := partnerCompaniesMap[invoice.PartnerCompanyID]
+
 		invoiceResponseItem := getInvoiceResponseItem{
 			ID:                        invoice.ID,
 			PublishedDate:             invoice.PublishedDate.Format("2006-01-02"),
@@ -52,19 +47,19 @@ func NewGetInvoicesResponse(invoices models.InvoiceList, partnerCompanies models
 			BilledAmount:              *invoice.BilledAmount,
 			Commission:                *invoice.Commission,
 			Tax:                       *invoice.Tax,
-			PartnerCompanyID:          partnerCompany.ID,
-			PartnerCompanyName:        partnerCompany.Name,
+			PartnerCompanyID:          invoice.PartnerCompany.ID,
+			PartnerCompanyName:        invoice.PartnerCompany.Name,
 			PartnerCompanyBankAccount: partnerCompanyBankAccountResponse{},
 		}
 
-		if partnerCompany.PartnerCompanyBankAccount != nil {
+		if invoice.PartnerCompany.PartnerCompanyBankAccount != nil {
 
 			invoiceResponseItem.PartnerCompanyBankAccount = partnerCompanyBankAccountResponse{
-				BankName:          partnerCompany.PartnerCompanyBankAccount.BankName,
-				BranchName:        partnerCompany.PartnerCompanyBankAccount.BranchName,
-				AccountType:       partnerCompany.PartnerCompanyBankAccount.AccountType.Label(),
-				AccountNumber:     partnerCompany.PartnerCompanyBankAccount.AccountNumber,
-				AccountHolderName: partnerCompany.PartnerCompanyBankAccount.AccountHolderName,
+				BankName:          invoice.PartnerCompany.PartnerCompanyBankAccount.BankName,
+				BranchName:        invoice.PartnerCompany.PartnerCompanyBankAccount.BranchName,
+				AccountType:       invoice.PartnerCompany.PartnerCompanyBankAccount.AccountType.Label(),
+				AccountNumber:     invoice.PartnerCompany.PartnerCompanyBankAccount.AccountNumber,
+				AccountHolderName: invoice.PartnerCompany.PartnerCompanyBankAccount.AccountHolderName,
 			}
 		}
 

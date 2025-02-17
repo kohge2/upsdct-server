@@ -12,7 +12,7 @@ import (
 
 type InvoiceUseCase interface {
 	CreateInvoice(paymentAmount int, partnerCompanyID, userID string, invoiceDueDate, now time.Time) error
-	GetInvoices(userID string, startDate, endDate *time.Time) (models.InvoiceList, models.PartnerCompanyEmbedList, error)
+	GetInvoices(userID string, startDate, endDate *time.Time) (models.InvoiceEmbedList, error)
 }
 
 type invoiceUseCase struct {
@@ -83,40 +83,40 @@ func (u *invoiceUseCase) CreateInvoice(paymentAmount int, partnerCompanyID, user
 	return nil
 }
 
-func (u *invoiceUseCase) GetInvoices(userID string, startDate, endDate *time.Time) (models.InvoiceList, models.PartnerCompanyEmbedList, error) {
+func (u *invoiceUseCase) GetInvoices(userID string, startDate, endDate *time.Time) (models.InvoiceEmbedList, error) {
 	ctx := context.Background()
 	// 存在しない user, company の場合は404を返す
 	user, err := u.userRepository.FindByUserID(ctx, userID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	company, err := u.companyRepository.FindByCompanyID(ctx, user.CompanyID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	invoices, err := u.invoiceRepository.FindInvoicesByCompanyIDAndPaidDueDateRange(ctx, company.ID, startDate, endDate)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	partnerCompanies, err := u.partnerCompanyRepository.FindPartnerCompanyEmbedListByPartnerCompanyIDs(ctx, invoices.UniquePartnerCompanyIDs())
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	// 暗号化して保存していた銀行口座情報を復号
 	for _, partnerCompany := range partnerCompanies {
 		if partnerCompany.PartnerCompanyBankAccount != nil {
 			if _, err := partnerCompany.PartnerCompanyBankAccount.SetDecryptedAccountNumber(config.Env.EncryptKey); err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 			if _, err := partnerCompany.PartnerCompanyBankAccount.SetDecryptedAccountHolderName(config.Env.EncryptKey); err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 		}
 	}
 
-	return invoices, partnerCompanies, nil
+	return models.NewInvoiceEmbedList(invoices, partnerCompanies), nil
 }

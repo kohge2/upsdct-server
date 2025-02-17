@@ -103,9 +103,8 @@ func TestGetInvoices(t *testing.T) {
 		mockInvoiceRepository.EXPECT().FindInvoicesByCompanyIDAndPaidDueDateRange(ctx, company.ID, &stareDate, &endDate).Return(invoices, nil)
 		mockPartnerCompanyRepository.EXPECT().FindPartnerCompanyEmbedListByPartnerCompanyIDs(ctx, invoices.UniquePartnerCompanyIDs()).Return(partnerCompanies, nil)
 
-		actualInvoices, actualPartnerCompanies, err := usecase.GetInvoices(userID, &stareDate, &endDate)
+		actualInvoices, err := usecase.GetInvoices(userID, &stareDate, &endDate)
 		assert.NoError(t, err)
-		assert.Equal(t, invoices, actualInvoices)
-		assert.Equal(t, partnerCompanies, actualPartnerCompanies)
+		assert.Equal(t, models.NewInvoiceEmbedList(invoices, partnerCompanies), actualInvoices)
 	})
 }
