@@ -64,14 +64,14 @@ func (u *invoiceUseCase) CreateInvoice(paymentAmount int, partnerCompanyID, user
 		if err != nil {
 			return err
 		}
-		invoice.SetCommission(commission)
+		invoice.Commission = &commission
 
 		billedAmount, tax, err := invoice.CalcBilledAmount(config.DefaultTaxRate)
 		if err != nil {
 			return err
 		}
-		invoice.SetBilledAmount(billedAmount)
-		invoice.SetTax(tax)
+		invoice.BilledAmount = &billedAmount
+		invoice.Tax = &tax
 
 		if err := u.invoiceRepository.CreateInvoice(ctx, invoice); err != nil {
 			return err

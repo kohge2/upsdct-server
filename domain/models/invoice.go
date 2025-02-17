@@ -26,14 +26,14 @@ func (m Invoice) TableName() string {
 	return "invoices"
 }
 
-func (m Invoice) CalcCommission() (int, error) {
+func (m *Invoice) CalcCommission() (int, error) {
 	if m.CommissionRate == nil {
 		return 0, fmt.Errorf("commission rate is not set")
 	}
 	return int(float64(m.PaidAmount) * *m.CommissionRate), nil
 }
 
-func (m Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
+func (m *Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
 	if m.Commission == nil {
 		return 0, 0, fmt.Errorf("commission is not set")
 	}
@@ -41,18 +41,6 @@ func (m Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
 	tax := int(float64(*m.Commission) * (taxRate))
 
 	return m.PaidAmount + *m.Commission + tax, tax, nil
-}
-
-func (m *Invoice) SetCommission(commission int) {
-	m.Commission = &commission
-}
-
-func (m *Invoice) SetBilledAmount(billedAmount int) {
-	m.BilledAmount = &billedAmount
-}
-
-func (m *Invoice) SetTax(tax int) {
-	m.Tax = &tax
 }
 
 type InvoiceList []*Invoice
