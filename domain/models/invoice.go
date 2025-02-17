@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 	"time"
+
+	"github.com/kohge2/upsdct-server/utils"
 )
 
 type Invoice struct {
@@ -30,7 +32,7 @@ func (m *Invoice) CalcCommission() (int, error) {
 	if m.CommissionRate == nil {
 		return 0, fmt.Errorf("commission rate is not set")
 	}
-	return int(float64(m.PaidAmount) * *m.CommissionRate), nil
+	return utils.MultiplyIntByDecimal(m.PaidAmount, *m.CommissionRate), nil
 }
 
 func (m *Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
@@ -38,7 +40,7 @@ func (m *Invoice) CalcBilledAmount(taxRate float64) (int, int, error) {
 		return 0, 0, fmt.Errorf("commission is not set")
 	}
 
-	tax := int(float64(*m.Commission) * (taxRate))
+	tax := utils.MultiplyIntByDecimal(*m.Commission, taxRate)
 
 	return m.PaidAmount + *m.Commission + tax, tax, nil
 }
